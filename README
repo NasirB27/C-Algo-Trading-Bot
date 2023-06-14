@@ -1,0 +1,81 @@
+#include <iostream>
+#include <vector>
+
+// Connect to MetaTrader 5
+void initializeMT5() {
+    // Implementation for connecting to MetaTrader 5
+    // ...
+}
+
+// Get the RSI value from TradingView
+double getRSI(const std::string& symbol, const std::string& timeframe) {
+    double rsi = 0.0;
+    // Implementation for retrieving RSI from TradingView
+    // ...
+    return rsi;
+}
+
+// Place an order in MetaTrader 5
+int placeOrder(const std::string& symbol, int orderType, double lots, double price, double stopLoss, double takeProfit) {
+    int orderId = 0;
+    // Implementation for placing an order in MetaTrader 5
+    // ...
+    return orderId;
+}
+
+// Check if the order is profitable and close it if true
+void checkAndCloseOrder(int orderId, double stopLoss) {
+    // Implementation for checking order profitability and closing it
+    // ...
+}
+
+int main() {
+    // Connect to MetaTrader 5
+    initializeMT5();
+
+    // Define trading parameters
+    std::vector<std::string> symbols = {"EURUSD", "USDJPY", "GBPUSD", "EURCAD", "GBPJPY", "AUDJPY", "USDGBP", "CADCHF", "GBPCHF", "USDCHF", "XAUUSD", "CADEUR", "EURGBP", "USDAUD", "EURAUD", "NZDJPY", "NZDUSD", "NZDAUD", "GBPCHF", "USDCNY", "USDHKD", "USDKRW", "CHFJPY"};
+    double lots = 0.08;
+    double stopLoss = 0.03 * getAccountBalance(); // no more than 3% of account balance
+    double takeProfit = 35;
+    double trailStop = 3;
+
+    // Loop through each symbol
+    for (const std::string& symbol : symbols) {
+        // Get the RSI value from TradingView
+        double rsi = getRSI(symbol, "weekly");
+
+        // Check if the RSI is over 75
+        if (rsi > 75) {
+            // Get the current ask price
+            double ask = getAsk(symbol);
+
+            // Place a sell stop order
+            int orderId = placeOrder(symbol, OP_SELL_STOP, lots, ask, stopLoss, takeProfit);
+
+            // Set the trail stop loss
+            orderModify(orderId, ask, stopLoss, takeProfit, trailStop);
+
+            // Check if order is profitable and close it if true
+            while (true) {
+                double orderProfit = getOrderProfit(orderId);
+
+                if (orderProfit >= 100) {
+                    orderClose(orderId);
+                    break;
+                } else if (orderProfit <= -stopLoss) {
+                    orderClose(orderId);
+                    break;
+                } else {
+                    // Continue checking profitability
+                    continue;
+                }
+            }
+        }
+        // Check if the RSI is under 22
+        else if (rsi < 22) {
+            // Get the current bid price
+            double bid = getBid(symbol);
+
+            // Place a buy stop order
+            int orderId = placeOrder(symbol, OP_BUY_STOP, lots
