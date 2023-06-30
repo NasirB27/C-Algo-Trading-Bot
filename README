@@ -15,6 +15,38 @@ double getRSI(const std::string& symbol, const std::string& timeframe) {
     return rsi;
 }
 
+// Get the VWAP
+double getVWAP(const std::string& symbol) {
+    double vwap = 0.0;
+    // Implementation for calculating VWAP
+    // ...
+    return vwap;
+}
+
+// Get the 200 EMA
+double get200EMA(const std::string& symbol) {
+    double ema_200 = 0.0;
+    // Implementation for calculating 200 EMA
+    // ...
+    return ema_200;
+}
+
+// Get the 50 EMA
+double get50EMA(const std::string& symbol) {
+    double ema_50 = 0.0;
+    // Implementation for calculating 50 EMA
+    // ...
+    return ema_50;
+}
+
+// Get the Session Volume
+double getSessionVolume(const std::string& symbol) {
+    double session_volume = 0.0;
+    // Implementation for retrieving Session Volume
+    // ...
+    return session_volume;
+}
+
 // Place an order in MetaTrader 5
 int placeOrder(const std::string& symbol, int orderType, double lots, double price, double stopLoss, double takeProfit) {
     int orderId = 0;
@@ -44,38 +76,8 @@ int main() {
     for (const std::string& symbol : symbols) {
         // Get the RSI value from TradingView
         double rsi = getRSI(symbol, "weekly");
+        double vwap = getVWAP(symbol);
+        double ema_200 = get200EMA(symbol);
+        double ema_50 = get50EMA(symbol);
+        double session_volume
 
-        // Check if the RSI is over 75
-        if (rsi > 75) {
-            // Get the current ask price
-            double ask = getAsk(symbol);
-
-            // Place a sell stop order
-            int orderId = placeOrder(symbol, OP_SELL_STOP, lots, ask, stopLoss, takeProfit);
-
-            // Set the trail stop loss
-            orderModify(orderId, ask, stopLoss, takeProfit, trailStop);
-
-            // Check if order is profitable and close it if true
-            while (true) {
-                double orderProfit = getOrderProfit(orderId);
-
-                if (orderProfit >= 100) {
-                    orderClose(orderId);
-                    break;
-                } else if (orderProfit <= -stopLoss) {
-                    orderClose(orderId);
-                    break;
-                } else {
-                    // Continue checking profitability
-                    continue;
-                }
-            }
-        }
-        // Check if the RSI is under 22
-        else if (rsi < 22) {
-            // Get the current bid price
-            double bid = getBid(symbol);
-
-            // Place a buy stop order
-            int orderId = placeOrder(symbol, OP_BUY_STOP, lots
